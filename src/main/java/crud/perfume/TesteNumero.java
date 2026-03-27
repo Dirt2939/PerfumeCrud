@@ -1,26 +1,35 @@
 package crud.perfume;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Scanner;
+import java.util.*;
 
 public class TesteNumero {
-    private static final ArrayList<String> perfumes = new ArrayList<>();
-    private static final ArrayList<String> perfumesBack = new ArrayList<>();
+    private static final ArrayList<Perfume> perfumes = new ArrayList<>();
+    private static final ArrayList<Perfume> perfumesBack = new ArrayList<>();
     private static final Scanner sc = new Scanner(System.in);
 
     static void main(String[] args) {
         // VALORES PADRÃO, CASO APENAS DESEJADO COMENTE
-        Collections.addAll(perfumes, "Monroe", "Farenheint", "Blue Skye",
-                "Mu'Lio Junpê", "Black Stone", "Diamond");
+       Collections.addAll(perfumes,
+                new Perfume("Monroe"),
+                new Perfume("Jason"),
+                new Perfume("Chanel No. 5"),
+                new Perfume("Sauvage"),
+                new Perfume("One Million"),
+                new Perfume("Acqua di Gio")
+        );
 
         do {
             System.out.println("\n========= Menu Perfume =========");
-            System.out.println("[1] - Cadastrar perfume\n[2] - Alterar perfume\n" +
-                    "[3] - Excluir perfume\n[4] - Listar perfume\n[5] - Quantidade de perfumes\n" +
-                    "[6] - Limpar lista\n[7] - Pesquisar perfume\n[8] - Ordenar lista\n" +
-                    "\n[0] - Sair\n");
+            System.out.println("[1] - Cadastrar perfume\n" +
+                               "[2] - Alterar perfume\n" +
+                               "[3] - Excluir perfume\n" +
+                               "[4] - Listar perfume \n" +
+                               "[5] - Quantidade de perfumes\n" +
+                               "[6] - Limpar lista\n" +
+                               "[7] - Pesquisar perfume\n" +
+                               "[8] - Ordenar lista\n" +
+                               "[9] - Restaurar Lista\n\n" +
+                               "[0] - Sair\n");
             try {
                 int opt = sc.nextInt();
                 sc.nextLine();
@@ -33,6 +42,7 @@ public class TesteNumero {
                     case 6 -> clearPerfumes();
                     case 7 -> isPerfume();
                     case 8 -> sortPerfumes();
+                    case 9 -> backPerfumes();
                     default -> {
                         return;
                     }
@@ -46,7 +56,7 @@ public class TesteNumero {
     public static void addPerfume() {
         System.out.println("\n========= Adicionar =========");
         System.out.println("Digite o nome do perfume: ");
-        perfumes.add(sc.nextLine());
+        perfumes.add(new Perfume(sc.nextLine()));
 
         System.out.println("Perfume adicionado com sucesso!");
     }
@@ -54,21 +64,30 @@ public class TesteNumero {
     public static int searchPerfume() {
         System.out.println("\n========= Pesquisa =========");
         System.out.println("Digite o nome do perfume para modificação: ");
-        int index = perfumes.indexOf(sc.nextLine());
+        String resp = sc.nextLine();
+
+        int index = -1;
+
+        for (int i = 0; i < perfumes.size(); i++) {
+            if (perfumes.get(i).getNome().equalsIgnoreCase(resp)) {
+                index = i;
+            }
+        }
 
         if (index != -1) {
             return index;
         } else if (perfumes.isEmpty()) {
             throw new RuntimeException("Não há nenhum perfume");
         }
+
         throw new RuntimeException("Perfume não encontrado");
     }
-
+    
     public static void updatePerfume() {
         int index = searchPerfume();
         System.out.println("\n========= Editar =========");
         System.out.println("Digite o novo nome do perfume: ");
-        perfumes.set(index, sc.nextLine());
+        perfumes.set(index, new Perfume(sc.nextLine()));
 
         System.out.println("Perfume modificado com sucesso!");
     }
@@ -91,8 +110,8 @@ public class TesteNumero {
             throw new RuntimeException("Não há nenhum perfume");
         } else {
             System.out.println("\n========= Perfumes =========");
-            for (String p : perfumes) {
-                System.out.println(p);
+            for (Perfume p : perfumes) {
+                System.out.println(p.getNome());
             }
         }
     }
@@ -105,18 +124,24 @@ public class TesteNumero {
         if (perfumes.isEmpty()) {
             throw new RuntimeException("Não há nenhum perfume");
         }
-        Collections.sort(perfumes);
+        perfumes.sort(Comparator.comparing(Perfume::getNome));
         perfumesBack.addAll(perfumes);
         System.out.println("Agora os perfumes estão em ordem alfabética");
     }
 
     public static void isPerfume() {
-        searchPerfume();
-        System.out.println("Perfume existe");
+        System.out.println(searchPerfume());
+
     }
 
     public static void clearPerfumes() {
         perfumes.clear();
+    }
+
+    public static void backPerfumes() {
+        perfumes.clear();
+        perfumes.addAll(perfumesBack);
+        System.out.println("Lista restaurada com sucesso!");
     }
 
 }
