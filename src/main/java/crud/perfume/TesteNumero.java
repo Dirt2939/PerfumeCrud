@@ -8,7 +8,7 @@ public class TesteNumero {
     private static final Scanner sc = new Scanner(System.in);
 
     static void main(String[] args) {
-        // VALORES PADRÃO, CASO APENAS DESEJADO COMENTE
+        // VALORES PADRÃO, CASO DESEJADO APENAS COMENTE
        Collections.addAll(perfumes,
                 new Perfume("Monroe"),
                 new Perfume("Jason"),
@@ -28,7 +28,7 @@ public class TesteNumero {
                                "[6] - Limpar lista\n" +
                                "[7] - Pesquisar perfume\n" +
                                "[8] - Ordenar lista\n" +
-                               "[9] - Restaurar Lista\n\n" +
+                               "[9] - Desordenar Lista\n\n" +
                                "[0] - Sair\n");
             try {
                 int opt = sc.nextInt();
@@ -43,12 +43,16 @@ public class TesteNumero {
                     case 7 -> isPerfume();
                     case 8 -> sortPerfumes();
                     case 9 -> backPerfumes();
-                    default -> {
+                    case 0 -> {
                         return;
+                    }
+                    default -> {
+                        System.out.println("Input inválido");
                     }
                 }
             } catch (Exception e) {
                 System.err.println("ERRO: " + e.getMessage());
+                sc.nextLine();
             }
         } while (true);
     }
@@ -58,12 +62,12 @@ public class TesteNumero {
         System.out.println("Digite o nome do perfume: ");
         perfumes.add(new Perfume(sc.nextLine()));
 
-        System.out.println("Perfume adicionado com sucesso!");
+        System.out.println("\nPerfume adicionado com sucesso!");
     }
 
     public static int searchPerfume() {
         System.out.println("\n========= Pesquisa =========");
-        System.out.println("Digite o nome do perfume para modificação: ");
+        System.out.println("Digite o nome do perfume: ");
         String resp = sc.nextLine();
 
         int index = -1;
@@ -71,16 +75,17 @@ public class TesteNumero {
         for (int i = 0; i < perfumes.size(); i++) {
             if (perfumes.get(i).getNome().equalsIgnoreCase(resp)) {
                 index = i;
+                break;
             }
         }
 
         if (index != -1) {
             return index;
         } else if (perfumes.isEmpty()) {
-            throw new RuntimeException("Não há nenhum perfume");
+            throw new RuntimeException("\nNão há nenhum perfume");
         }
 
-        throw new RuntimeException("Perfume não encontrado");
+        throw new RuntimeException("\nPerfume não encontrado");
     }
     
     public static void updatePerfume() {
@@ -89,7 +94,7 @@ public class TesteNumero {
         System.out.println("Digite o novo nome do perfume: ");
         perfumes.set(index, new Perfume(sc.nextLine()));
 
-        System.out.println("Perfume modificado com sucesso!");
+        System.out.println("\nPerfume modificado com sucesso!");
     }
 
     public static void deletePerfume() {
@@ -97,17 +102,21 @@ public class TesteNumero {
         System.out.println("\n========= Deletar =========");
         System.out.println("Tem certeza que deseja remover esse perfume?(s/n) ");
         switch (sc.nextLine()) {
-            case "s", "sim" -> perfumes.remove(index);
+            case "s", "sim" -> {
+                perfumes.remove(index);
+                System.out.println("\nPerfume removido com sucesso!");
+            }
             case "n", "nao" -> {
+                System.out.println("\nCancelando..,");
                 return;
             }
-            default -> System.out.println("Input inválido...");
+            default -> System.out.println("\nInput inválido...");
         }
     }
 
     public static void showPerfumes() {
         if (perfumes.isEmpty()) {
-            throw new RuntimeException("Não há nenhum perfume");
+            throw new RuntimeException("\nNão há nenhum perfume");
         } else {
             System.out.println("\n========= Perfumes =========");
             for (Perfume p : perfumes) {
@@ -117,31 +126,32 @@ public class TesteNumero {
     }
 
     public static void showAmountPerfumes() {
-        System.out.println("Atualmente se tem " + perfumes.size() + " perfumes");
+        System.out.println("\nAtualmente se tem " + perfumes.size() + " perfumes");
     }
 
     public static void sortPerfumes() {
         if (perfumes.isEmpty()) {
-            throw new RuntimeException("Não há nenhum perfume");
+            throw new RuntimeException("\nNão há nenhum perfume");
         }
-        perfumes.sort(Comparator.comparing(Perfume::getNome));
+        perfumes.clear();
         perfumesBack.addAll(perfumes);
-        System.out.println("Agora os perfumes estão em ordem alfabética");
+        perfumes.sort(Comparator.comparing(Perfume::getNome));
+        System.out.println("\nAgora os perfumes estão em ordem alfabética!");
     }
 
     public static void isPerfume() {
-        System.out.println(searchPerfume());
-
+        System.out.println("\nResultado da pesquisa: "+perfumes.get(searchPerfume()).getNome());
     }
 
     public static void clearPerfumes() {
         perfumes.clear();
+        System.out.println("\nPerfumes removidos!");
     }
 
     public static void backPerfumes() {
         perfumes.clear();
         perfumes.addAll(perfumesBack);
-        System.out.println("Lista restaurada com sucesso!");
+        System.out.println("\nLista restaurada com sucesso!");
     }
 
 }
